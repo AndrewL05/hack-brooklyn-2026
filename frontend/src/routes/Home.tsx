@@ -45,12 +45,9 @@ export function Home() {
 
   return (
     <div className="relative overflow-hidden">
-      {/* Atmospheric background */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 h-[600px] w-[600px] rounded-full bg-ember/4 blur-[140px]" />
       </div>
-
-      {/* Hero */}
       <section className="relative mx-auto max-w-7xl px-6 pt-20 pb-24 md:pt-32 md:pb-36">
         <motion.div
           variants={stagger}
@@ -58,19 +55,41 @@ export function Home() {
           animate="show"
           className="grid grid-cols-1 gap-16 lg:grid-cols-2 lg:gap-24"
         >
-          {/* Left: text */}
           <div className="flex flex-col justify-center">
             <motion.p variants={fadeUp} className="mb-6 font-mono text-xs uppercase tracking-widest text-paper-faint">
-              <span className="text-ember">▶</span> session.active
+              <span className="text-ember">▶</span> session.ready
             </motion.p>
 
             <motion.h1
-              variants={fadeUp}
-              className="font-sans text-[clamp(2.8rem,6vw,5rem)] font-extrabold leading-[0.96] tracking-tight text-paper"
+              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.09 } } }}
+              className="flex flex-col"
             >
-              <span className="text-ember">Solve</span> it.<br />
-              <span className="text-sky-400">Explain</span> it.<br />
-              <span className="text-moss">Get the <span className="text-sky-400">offer</span>.</span>
+              <motion.div variants={fadeUp} className="group flex items-center gap-3 cursor-default">
+                <span className="font-sans text-[clamp(2.8rem,6vw,5rem)] font-extrabold leading-[0.96] tracking-tight">
+                  <span className="text-amber-400 transition-all duration-200 group-hover:line-through group-hover:opacity-50">Solve</span>
+                  <span className="text-paper transition-all duration-200 group-hover:line-through group-hover:opacity-50"> it.</span>
+                </span>
+                <span className="font-mono text-[10px] text-amber-400/70 border border-amber-400/30 bg-amber-400/10 rounded-sm px-1.5 py-0.5 shrink-0 self-center">
+                  Technical
+                </span>
+              </motion.div>
+
+              <motion.div variants={fadeUp} className="group flex items-center gap-3 cursor-default">
+                <span className="font-sans text-[clamp(2.8rem,6vw,5rem)] font-extrabold leading-[0.96] tracking-tight">
+                  <span className="text-sky-400 transition-all duration-200 group-hover:line-through group-hover:opacity-50">Explain</span>
+                  <span className="text-paper transition-all duration-200 group-hover:line-through group-hover:opacity-50"> it.</span>
+                </span>
+                <span className="font-mono text-[10px] text-sky-400/70 border border-sky-400/30 bg-sky-400/10 rounded-sm px-1.5 py-0.5 shrink-0 self-center">
+                  Behavioral
+                </span>
+              </motion.div>
+
+              <motion.div variants={fadeUp} className="flex items-center gap-3">
+                <span className="font-sans text-[clamp(2.8rem,6vw,5rem)] font-extrabold leading-[0.96] tracking-tight">
+                  <span className="text-moss">Get the </span>
+                  <span className="text-violet-400">offer.</span>
+                </span>
+              </motion.div>
             </motion.h1>
 
             <motion.p variants={fadeUp} className="mt-8 max-w-md text-base leading-relaxed text-paper-dim">
@@ -86,7 +105,7 @@ export function Home() {
                 <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
               </button>
               <button
-                onClick={() => navigate('/feedback/feedback-1')}
+                onClick={() => navigate('/sample-feedback')}
                 className="font-mono text-sm uppercase tracking-widest text-paper-dim transition-colors duration-200 hover:text-paper border-b border-transparent hover:border-paper-faint pb-px"
               >
                 See sample feedback
@@ -103,7 +122,6 @@ export function Home() {
             </motion.div>
           </div>
 
-          {/* Right: transcript card */}
           <motion.div variants={fadeUp} className="flex items-center justify-center">
             <div className="w-full max-w-md rounded-md border border-ink-700/80 bg-ink-900 p-6 shadow-card">
               <div className="mb-4 flex items-center justify-between">
@@ -150,10 +168,8 @@ export function Home() {
         </motion.div>
       </section>
 
-      {/* Browser scroll reveal */}
       <BrowserScrollReveal />
 
-      {/* Feature strip */}
       <section className="relative border-t border-ink-700/40 bg-ink-900/40 py-20">
         <div className="mx-auto max-w-7xl px-6">
           <motion.div
@@ -176,7 +192,6 @@ export function Home() {
         </div>
       </section>
 
-      {/* Social proof — company strip */}
       <section className="py-16">
         <div className="mx-auto max-w-7xl px-6">
           <motion.div
@@ -202,7 +217,6 @@ export function Home() {
         </div>
       </section>
 
-      {/* Bottom CTA */}
       <section className="relative border-t border-ink-700/40 py-24">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute bottom-0 left-1/2 h-[300px] w-[600px] -translate-x-1/2 rounded-full bg-ember/3 blur-[100px]" />
