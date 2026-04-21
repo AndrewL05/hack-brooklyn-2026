@@ -10,6 +10,7 @@ import { BehavioralInterview } from '@/routes/BehavioralInterview'
 import { Feedback } from '@/routes/Feedback'
 import { History } from '@/routes/History'
 import { Account } from '@/routes/Account'
+import { SampleFeedback } from '@/routes/SampleFeedback'
 import { NotFound } from '@/routes/NotFound'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -37,6 +38,7 @@ export default function App() {
           <Route path="/feedback/:id" element={<ProtectedRoute><Feedback /></ProtectedRoute>} />
           <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
           <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
+          <Route path="/sample-feedback" element={<SampleFeedback />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

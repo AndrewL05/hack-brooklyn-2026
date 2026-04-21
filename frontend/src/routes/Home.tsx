@@ -68,10 +68,9 @@ export function Home() {
               variants={fadeUp}
               className="font-sans text-[clamp(2.8rem,6vw,5rem)] font-extrabold leading-[0.96] tracking-tight text-paper"
             >
-              The one thing<br />
-              LeetCode<br />
-              can't{' '}
-              <span className="text-ember">simulate.</span>
+              <span className="text-ember">Solve</span> it.<br />
+              <span className="text-sky-400">Explain</span> it.<br />
+              <span className="text-moss">Get the <span className="text-sky-400">offer</span>.</span>
             </motion.h1>
 
             <motion.p variants={fadeUp} className="mt-8 max-w-md text-base leading-relaxed text-paper-dim">
