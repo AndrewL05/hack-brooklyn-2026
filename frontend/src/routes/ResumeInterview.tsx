@@ -138,8 +138,18 @@ export function ResumeInterview() {
 
         convRef.current = conversation
 
-        // Tap into ElevenLabs' internal AudioContext to record both user + AI audio
-        const voiceConv = conversation as any
+        // tap into ElevenLabs' internal AudioContext to record both user + AI audio
+        type VoiceConversationWithAudio = typeof conversation & {
+          output?: {
+            context: AudioContext
+            gain: AudioNode
+          }
+          input?: {
+            inputStream: MediaStream
+          }
+        }
+        
+        const voiceConv = conversation as VoiceConversationWithAudio
         if (voiceConv.output && voiceConv.input) {
           try {
             const ctx: AudioContext = voiceConv.output.context
