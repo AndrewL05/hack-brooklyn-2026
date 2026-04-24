@@ -5,7 +5,7 @@ import { Conversation } from '@11labs/client'
 import type { Status } from '@11labs/client'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/cn'
-import { apiFetch } from '@/lib/api'
+import { apiFetch, wsUrl } from '@/lib/api'
 import type { ApiSession, ApiAgentUrl } from '@/lib/apiTypes'
 
 function useCountdown(totalSecs: number) {
@@ -79,6 +79,8 @@ export function ResumeInterview() {
   const [ending, setEnding] = useState(false)
 
   const convRef = useRef<Awaited<ReturnType<typeof Conversation.startSession>> | null>(null)
+  const audioWsRef = useRef<WebSocket | null>(null)
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null)
 
   const totalSecs = (session?.duration_minutes ?? 45) * 60
   const timeStr = useCountdown(totalSecs)
@@ -108,6 +110,10 @@ export function ResumeInterview() {
           })
         }
 
+        const wsProtocolUrl = wsUrl(`/ws/interviews/${sessionId}/audio?token=${token}`)
+        const audioWs = new WebSocket(wsProtocolUrl)
+        audioWsRef.current = audioWs
+
         const conversation = await Conversation.startSession({
           signedUrl: agentUrl.signed_url,
           onMessage: ({ message, source }: { message: string; source: 'ai' | 'user' }) => {
@@ -131,6 +137,38 @@ export function ResumeInterview() {
         }
 
         convRef.current = conversation
+
+        // Tap into ElevenLabs' internal AudioContext to record both user + AI audio
+        const voiceConv = conversation as any
+        if (voiceConv.output && voiceConv.input) {
+          try {
+            const ctx: AudioContext = voiceConv.output.context
+            const recordingDest = ctx.createMediaStreamDestination()
+            // Connect AI audio (gain → speakers already set up; this adds a second output)
+            voiceConv.output.gain.connect(recordingDest)
+            // Import user mic into the same AudioContext so we can mix it
+            const micSrc = ctx.createMediaStreamSource(voiceConv.input.inputStream as MediaStream)
+            micSrc.connect(recordingDest)
+            const doRecord = () => {
+              const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+                ? 'audio/webm;codecs=opus'
+                : 'audio/webm'
+              const mr = new MediaRecorder(recordingDest.stream, { mimeType })
+              mediaRecorderRef.current = mr
+              mr.ondataavailable = (e) => {
+                if (e.data.size > 0 && audioWs.readyState === WebSocket.OPEN) {
+                  audioWs.send(e.data)
+                }
+              }
+              mr.start(1000)
+            }
+            if (audioWs.readyState === WebSocket.OPEN) doRecord()
+            else audioWs.onopen = doRecord
+          } catch (err) {
+            console.error('Failed to set up mixed recording:', err)
+          }
+        }
+
         const convId = conversation.getId()
 
         if (convId) {
@@ -156,6 +194,8 @@ export function ResumeInterview() {
     start()
     return () => {
       cancelled = true
+      mediaRecorderRef.current?.stop()
+      audioWsRef.current?.close()
       convRef.current?.endSession().catch(() => {})
     }
   }, [sessionId, getToken])

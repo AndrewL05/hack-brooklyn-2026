@@ -114,22 +114,6 @@ export function BehavioralInterview() {
         const audioWs = new WebSocket(wsProtocolUrl)
         audioWsRef.current = audioWs
 
-        audioWs.onopen = async () => {
-          try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-            const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' })
-            mediaRecorderRef.current = mediaRecorder
-            mediaRecorder.ondataavailable = (e) => {
-              if (e.data.size > 0 && audioWs.readyState === WebSocket.OPEN) {
-                audioWs.send(e.data)
-              }
-            }
-            mediaRecorder.start(1000)
-          } catch (err) {
-            console.error("Microphone access denied or error:", err)
-          }
-        }
-
         const conversation = await Conversation.startSession({
           signedUrl: agentUrl.signed_url,
           onMessage: ({ message, source }: { message: string; source: 'ai' | 'user' }) => {
@@ -153,6 +137,47 @@ export function BehavioralInterview() {
         }
 
         convRef.current = conversation
+
+        // tap into ElevenLabs' internal AudioContext to record both user + AI audio
+        type VoiceConversationWithAudio = typeof conversation & {
+          output?: {
+            context: AudioContext
+            gain: AudioNode
+          }
+          input?: {
+            inputStream: MediaStream
+          }
+        }
+        const voiceConv = conversation as VoiceConversationWithAudio
+        if (voiceConv.output && voiceConv.input) {
+          try {
+            const ctx: AudioContext = voiceConv.output.context
+            const recordingDest = ctx.createMediaStreamDestination()
+            // Connect AI audio (gain → speakers already set up; this adds a second output)
+            voiceConv.output.gain.connect(recordingDest)
+            // Import user mic into the same AudioContext so we can mix it
+            const micSrc = ctx.createMediaStreamSource(voiceConv.input.inputStream as MediaStream)
+            micSrc.connect(recordingDest)
+            const doRecord = () => {
+              const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+                ? 'audio/webm;codecs=opus'
+                : 'audio/webm'
+              const mr = new MediaRecorder(recordingDest.stream, { mimeType })
+              mediaRecorderRef.current = mr
+              mr.ondataavailable = (e) => {
+                if (e.data.size > 0 && audioWs.readyState === WebSocket.OPEN) {
+                  audioWs.send(e.data)
+                }
+              }
+              mr.start(1000)
+            }
+            if (audioWs.readyState === WebSocket.OPEN) doRecord()
+            else audioWs.onopen = doRecord
+          } catch (err) {
+            console.error('Failed to set up mixed recording:', err)
+          }
+        }
+
         const convId = conversation.getId()
 
         if (convId) {
@@ -179,7 +204,6 @@ export function BehavioralInterview() {
     return () => {
       cancelled = true
       mediaRecorderRef.current?.stop()
-      mediaRecorderRef.current?.stream.getTracks().forEach(t => t.stop())
       audioWsRef.current?.close()
       convRef.current?.endSession().catch(() => {})
     }
@@ -190,9 +214,7 @@ export function BehavioralInterview() {
     setEnding(true)
     try {
       mediaRecorderRef.current?.stop()
-      mediaRecorderRef.current?.stream.getTracks().forEach(t => t.stop())
       audioWsRef.current?.close()
-
       await convRef.current?.endSession()
       const token = await getToken()
       if (token) {
