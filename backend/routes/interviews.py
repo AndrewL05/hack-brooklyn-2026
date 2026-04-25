@@ -20,6 +20,7 @@ from schemas.interviews import (
 )
 from services.code_runner import load_problem
 from services.elevenlabs import create_interview_agent, get_signed_url, sync_transcript
+from services.tts_cache import prewarm as tts_prewarm
 from services.feedback import generate_feedback
 from services.question_planner import plan_questions
 
@@ -43,6 +44,7 @@ from auth.rate_limit import RateLimiter
 @router.post("", response_model=SessionResponse, status_code=status.HTTP_201_CREATED)
 async def create_session(
     body: CreateSessionRequest,
+    background_tasks: BackgroundTasks,
     clerk_user_id: str = Depends(RateLimiter(5, 60, "create_session")),
 ):
     session = InterviewSession(
@@ -79,7 +81,14 @@ async def create_session(
     # Create the ElevenLabs conversational agent for this session
     agent_id: str | None = None
     try:
-        agent_id = await create_interview_agent(session, questions)
+        agent_id, first_msg, voice_cfg = await create_interview_agent(session, questions)
+        background_tasks.add_task(
+            tts_prewarm,
+            first_msg,
+            voice_cfg["voice_id"],
+            voice_cfg["stability"],
+            voice_cfg["similarity_boost"],
+        )
     except Exception as exc:
         logger.error("ElevenLabs agent creation failed for session %s: %s", session_id, exc)
 
