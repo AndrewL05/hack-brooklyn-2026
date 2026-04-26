@@ -4,7 +4,7 @@ import { useAuth } from '@clerk/clerk-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/cn'
 import { apiFetch } from '@/lib/api'
-import type { ApiProblemListItem, ApiProblemListResponse, ApiProblemDetail } from '@/lib/apiTypes'
+import type { ApiProblemListItem, ApiProblemListResponse, ApiProblemDetail, ApiSolvedSlugsResponse, ApiMarkSolvedResponse } from '@/lib/apiTypes'
 
 type DifficultyFilter = 'all' | 'easy' | 'medium' | 'hard'
 
@@ -17,7 +17,7 @@ const fadeUp = {
 function DifficultyBadge({ difficulty }: { difficulty: string }) {
   const styles: Record<string, string> = {
     easy: 'text-moss bg-moss/10 border-moss/20',
-    medium: 'text-ember bg-ember/10 border-ember/20',
+    medium: 'text-[#F97316] bg-[#F97316]/10 border-[#F97316]/20',
     hard: 'text-crimson bg-crimson/10 border-crimson/20',
   }
   return (
@@ -27,7 +27,7 @@ function DifficultyBadge({ difficulty }: { difficulty: string }) {
   )
 }
 
-function ProblemCard({ problem, onSelect }: { problem: ApiProblemListItem; onSelect: () => void }) {
+function ProblemCard({ problem, onSelect, isSolved }: { problem: ApiProblemListItem; onSelect: () => void; isSolved: boolean }) {
   return (
     <motion.div
       variants={fadeUp}
@@ -41,6 +41,11 @@ function ProblemCard({ problem, onSelect }: { problem: ApiProblemListItem; onSel
         <DifficultyBadge difficulty={problem.difficulty} />
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-1.5">
+        {isSolved && (
+          <span className="rounded-sm border border-moss/30 bg-moss/10 px-1.5 py-0.5 font-mono text-[10px] text-moss">
+            ✓ solved
+          </span>
+        )}
         {problem.has_test_cases && (
           <span className="rounded-sm border border-moss/20 bg-moss/8 px-1.5 py-0.5 font-mono text-[10px] text-moss">
             ✓ runnable
@@ -56,15 +61,21 @@ function ProblemCard({ problem, onSelect }: { problem: ApiProblemListItem; onSel
   )
 }
 
-function DetailPanel({ slug, onClose, onPractice }: {
+function DetailPanel({ slug, onClose, onPractice, isSolved, onSolve, onTestsGenerated }: {
   slug: string
   onClose: () => void
   onPractice: (difficulty: string) => void
+  isSolved: boolean
+  onSolve: () => void
+  onTestsGenerated: () => void
 }) {
   const { getToken } = useAuth()
   const [detail, setDetail] = useState<ApiProblemDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [markingDone, setMarkingDone] = useState(false)
+  const [generatingTests, setGeneratingTests] = useState(false)
+  const [preparingPractice, setPreparingPractice] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -85,6 +96,62 @@ function DetailPanel({ slug, onClose, onPractice }: {
     load()
     return () => { cancelled = true }
   }, [slug, getToken])
+
+  async function handleMarkSolved() {
+    if (isSolved || markingDone) return
+    setMarkingDone(true)
+    try {
+      const token = await getToken()
+      if (!token) { setMarkingDone(false); return }
+      await apiFetch<ApiMarkSolvedResponse>(`/api/problems/${slug}/solve`, token, { method: 'POST' })
+      onSolve()
+      setMarkingDone(false)
+    } catch {
+      setMarkingDone(false)
+    }
+  }
+
+  async function handleGenerateTests() {
+    if (generatingTests) return
+    setGeneratingTests(true)
+    try {
+      const token = await getToken()
+      if (!token) { setGeneratingTests(false); return }
+      const updated = await apiFetch<ApiProblemDetail>(
+        `/api/problems/${slug}/generate-tests`,
+        token,
+        { method: 'POST' }
+      )
+      setDetail(updated)
+      onTestsGenerated()
+    } catch {
+      setGeneratingTests(false)
+    }
+  }
+
+  async function handlePractice() {
+    if (!detail || preparingPractice) return
+    if (detail.source === 'leetcode' && !detail.has_test_cases) {
+      setPreparingPractice(true)
+      const difficulty = detail.difficulty
+      try {
+        const token = await getToken()
+        if (!token) { setPreparingPractice(false); return }
+        const updated = await apiFetch<ApiProblemDetail>(
+          `/api/problems/${slug}/generate-tests`,
+          token,
+          { method: 'POST' }
+        )
+        setDetail(updated)
+        onTestsGenerated()
+        onPractice(difficulty)
+      } catch {
+        setPreparingPractice(false)
+      }
+    } else {
+      onPractice(detail.difficulty)
+    }
+  }
 
   return (
     <motion.div
@@ -166,11 +233,45 @@ function DetailPanel({ slug, onClose, onPractice }: {
               </div>
             )}
 
+            {detail.source === 'leetcode' && !detail.has_test_cases && (
+              <button
+                onClick={handleGenerateTests}
+                disabled={generatingTests}
+                className={cn(
+                  'w-full rounded-sm border px-4 py-3 font-mono text-xs uppercase tracking-widest transition-all duration-200',
+                  generatingTests
+                    ? 'border-paper-faint/10 bg-ink-800/20 text-paper-faint cursor-wait'
+                    : 'border-paper-faint/20 bg-ink-800/40 text-paper-dim hover:border-paper-faint/40 hover:text-paper'
+                )}
+              >
+                {generatingTests ? 'Generating test cases…' : '⚡ Generate test cases'}
+              </button>
+            )}
+
             <button
-              onClick={() => onPractice(detail.difficulty)}
-              className="w-full rounded-sm border border-ember/30 bg-ember/8 px-4 py-3 font-mono text-xs uppercase tracking-widest text-ember transition-all duration-200 hover:border-ember/60 hover:bg-ember/15"
+              onClick={handlePractice}
+              disabled={preparingPractice}
+              className={cn(
+                'w-full rounded-sm border px-4 py-3 font-mono text-xs uppercase tracking-widest transition-all duration-200',
+                preparingPractice
+                  ? 'border-ember/20 bg-ember/5 text-ember/50 cursor-wait'
+                  : 'border-ember/30 bg-ember/8 text-ember hover:border-ember/60 hover:bg-ember/15'
+              )}
             >
-              Practice this problem →
+              {preparingPractice ? 'Preparing…' : 'Practice this problem →'}
+            </button>
+
+            <button
+              onClick={handleMarkSolved}
+              disabled={isSolved || markingDone}
+              className={cn(
+                'w-full rounded-sm border px-4 py-3 font-mono text-xs uppercase tracking-widest transition-all duration-200',
+                isSolved || markingDone
+                  ? 'border-moss/20 bg-moss/5 text-moss/50 cursor-not-allowed'
+                  : 'border-moss/30 bg-moss/8 text-moss hover:border-moss/60 hover:bg-moss/15'
+              )}
+            >
+              {isSolved ? '✓ Marked as solved' : markingDone ? 'Saving…' : 'Mark as solved'}
             </button>
           </div>
         )}
@@ -189,6 +290,28 @@ export function Problems() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null)
+  const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set())
+  const [solvedSlugs, setSolvedSlugs] = useState<Set<string>>(new Set())
+
+  useEffect(() => {
+    async function loadSolved() {
+      try {
+        const token = await getToken()
+        if (!token) return
+        const data = await apiFetch<ApiSolvedSlugsResponse>('/api/problems/solved', token)
+        setSolvedSlugs(new Set(data.solved_slugs))
+      } catch {
+        // non-critical
+      }
+    }
+    loadSolved()
+  }, [getToken])
+
+  const allTags = useMemo(() => {
+    const set = new Set<string>()
+    problems.forEach((p) => p.topic_tags.forEach((t) => set.add(t)))
+    return Array.from(set).sort()
+  }, [problems])
 
   useEffect(() => {
     let cancelled = false
@@ -211,12 +334,18 @@ export function Problems() {
   }, [filter, getToken])
 
   const displayed = useMemo(() => {
-    if (!search.trim()) return problems
-    const q = search.toLowerCase()
-    return problems.filter(
-      (p) => p.title.toLowerCase().includes(q) || p.topic_tags.some((t) => t.toLowerCase().includes(q))
-    )
-  }, [problems, search])
+    let result = problems
+    if (search.trim()) {
+      const q = search.toLowerCase()
+      result = result.filter(
+        (p) => p.title.toLowerCase().includes(q) || p.topic_tags.some((t) => t.toLowerCase().includes(q))
+      )
+    }
+    if (selectedTags.size > 0) {
+      result = result.filter((p) => [...selectedTags].every((t) => p.topic_tags.includes(t)))
+    }
+    return result
+  }, [problems, search, selectedTags])
 
   const filterTabs: { label: string; value: DifficultyFilter }[] = [
     { label: 'All', value: 'all' },
@@ -258,6 +387,43 @@ export function Problems() {
         />
       </div>
 
+      {allTags.length > 0 && (
+        <div className="mb-6">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="mr-1 font-mono text-[10px] uppercase tracking-widest text-paper-faint">Tags:</span>
+            {allTags.map((tag) => (
+              <button
+                key={tag}
+                onClick={() =>
+                  setSelectedTags((prev) => {
+                    const next = new Set(prev)
+                    if (next.has(tag)) next.delete(tag)
+                    else next.add(tag)
+                    return next
+                  })
+                }
+                className={cn(
+                  'rounded-sm border px-2 py-0.5 font-mono text-[10px] transition-all duration-150',
+                  selectedTags.has(tag)
+                    ? 'border-ember/50 bg-ember/15 text-ember'
+                    : 'border-ink-700/40 text-paper-faint hover:border-ink-600 hover:text-paper-dim'
+                )}
+              >
+                {tag}
+              </button>
+            ))}
+            {selectedTags.size > 0 && (
+              <button
+                onClick={() => setSelectedTags(new Set())}
+                className="ml-2 font-mono text-[10px] text-paper-faint hover:text-crimson transition-colors"
+              >
+                × clear
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       {error && <p className="mb-6 font-mono text-xs text-crimson">{error}</p>}
 
       {loading ? (
@@ -271,7 +437,7 @@ export function Problems() {
       ) : (
         <motion.div variants={stagger} initial="hidden" animate="show" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {displayed.map((p) => (
-            <ProblemCard key={p.slug} problem={p} onSelect={() => setSelectedSlug(p.slug)} />
+            <ProblemCard key={p.slug} problem={p} onSelect={() => setSelectedSlug(p.slug)} isSolved={solvedSlugs.has(p.slug)} />
           ))}
         </motion.div>
       )}
@@ -287,7 +453,16 @@ export function Problems() {
             <DetailPanel
               slug={selectedSlug}
               onClose={() => setSelectedSlug(null)}
-              onPractice={(difficulty) => navigate(`/setup?difficulty=${difficulty}`)}
+              onPractice={(difficulty) => navigate(
+                `/setup?type=technical&role=mid&company=amazon&difficulty=${difficulty}&problem_id=${selectedSlug}`
+              )}
+              isSolved={solvedSlugs.has(selectedSlug)}
+              onSolve={() => setSolvedSlugs((prev) => new Set([...prev, selectedSlug]))}
+              onTestsGenerated={() => {
+                setProblems((prev) =>
+                  prev.map((p) => p.slug === selectedSlug ? { ...p, has_test_cases: true } : p)
+                )
+              }}
             />
           </>
         )}

@@ -37,9 +37,9 @@ export default {
       },
       boxShadow: {
         card: '0 1px 0 rgba(255,255,255,0.03), 0 4px 16px -4px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.05)',
-        'card-hover': '0 1px 0 rgba(255,255,255,0.05), 0 8px 24px -8px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(74,222,128,0.15)',
-        ember: '0 0 32px -4px rgba(74,222,128,0.35)',
-        'ember-sm': '0 0 12px -2px rgba(74,222,128,0.2)',
+        'card-hover': '0 1px 0 rgba(255,255,255,0.05), 0 8px 24px -8px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(249,115,22,0.15)',
+        ember: '0 0 32px -4px rgba(249,115,22,0.35)',
+        'ember-sm': '0 0 12px -2px rgba(249,115,22,0.2)',
         subtle: 'inset 0 0 0 1px rgba(255,255,255,0.05)',
       },
       keyframes: {

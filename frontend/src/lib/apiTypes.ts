@@ -150,3 +150,12 @@ export interface ApiProblemDetail {
   starter_code: Record<string, string> | null
   hints: string[]
 }
+
+export interface ApiSolvedSlugsResponse {
+  solved_slugs: string[]
+}
+
+export interface ApiMarkSolvedResponse {
+  slug: string
+  already_solved: boolean
+}
