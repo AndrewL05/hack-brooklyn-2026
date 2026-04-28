@@ -16,7 +16,7 @@ from config import settings
 from db import db
 import httpx
 
-app = FastAPI(title="Hack Brooklyn 2026 Backend")
+app = FastAPI(title="Intervue Backend")
 
 app.add_middleware(
     CORSMiddleware,
