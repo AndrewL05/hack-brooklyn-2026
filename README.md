@@ -13,7 +13,7 @@
 
 ## Overview
 
-"Don’t just prep. Practice for real." "Practice for interviews, not just questions."** Intervue is a live, voice-first mock interview platform that simulates the nuance and pressure of real technical and behavioral interviews. By blending real-time web intelligence with adaptive AI, we help candidates stop rehearsing and start performing.
+**Don’t just prep. Practice for real.** Intervue is a live, voice-first mock interview platform that simulates the nuance and pressure of real technical and behavioral interviews. By blending real-time web intelligence with adaptive AI, we help candidates stop rehearsing and start performing.
 
 
 ## Inspiration
@@ -33,6 +33,7 @@ Most interview prep tools are static: you read a question on a screen and type a
 * **Backend:** FastAPI, Python, WebSocket, Judge0 (code execution)
 * **Voice/AI:** ElevenLabs, Tavily, Groq (Llama 3.1 8B), Featherless 
 * **Database:** MongoDB 
+* **Cache/State:** Redis (problem catalog cache, rate limiting, session orchestration state)
 * **Storage:** AWS S3 (resumes, code snapshots, feedback reports)
 * **Infrastructure:** Docker, NGINX
 
@@ -48,6 +49,7 @@ Most interview prep tools are static: you read a question on a screen and type a
     - MongoDB Atlas URI
     - Tavily
     - AWS S3 (access key, secret key, bucket name) — optional, needed for resume upload and code snapshots
+* Redis, or Docker Compose for the bundled Redis service
 
 ### Installation
 1.  **Clone the repo:**
@@ -57,8 +59,14 @@ Most interview prep tools are static: you read a question on a screen and type a
     ```
 2.  **Set up environment:**
     ```bash
+    # Backend secrets (runtime)
     cp backend/.env.example backend/.env
     # open backend/.env and fill in your API keys
+    # set REDIS_URL=redis://localhost:6379 for local dev
+
+    # Frontend build vars (Docker only)
+    # create .env at the repo root and set VITE_CLERK_PUBLISHABLE_KEY
+    # Docker Compose uses REDIS_URL=redis://redis:6379 internally
     ```
 
 ### Option A — Docker (recommended)
@@ -69,7 +77,7 @@ Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/).
 docker compose up --build
 ```
 
-- Frontend → http://localhost
+- Frontend → http://localhost:5173
 - Backend API → http://localhost:8000
 
 ### Option B — Local dev
@@ -77,6 +85,9 @@ docker compose up --build
 Requires Python 3.12+ and Node 18+.
 
 ```bash
+# Redis
+docker run --rm -p 6379:6379 redis:7
+
 # Backend
 cd backend
 python -m venv .venv
