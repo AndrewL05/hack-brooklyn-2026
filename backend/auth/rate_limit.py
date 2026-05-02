@@ -15,11 +15,16 @@ class RateLimiter:
         self.scope = scope
 
     async def __call__(self, clerk_user_id: str = Depends(require_auth)) -> str:
-        redis = get_redis()
         key = f"ratelimit:{self.scope}:{clerk_user_id}"
-        count = await redis.incr(key)
-        if count == 1:
-            await redis.expire(key, self.window_seconds)
+        count = None
+        try:
+            redis = get_redis()
+            count = await redis.incr(key)
+            if count == 1:
+                await redis.expire(key, self.window_seconds)
+        except Exception as exc:
+            logger.warning("Rate limiter Redis unavailable, allowing request: %s", exc)
+            return clerk_user_id
         if count > self.calls:
             raise HTTPException(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,

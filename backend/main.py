@@ -27,12 +27,18 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_redis(settings.redis_url)
-    seed_problems()
-    db.solved_problems.create_index(
-        [("clerk_user_id", 1), ("problem_slug", 1)],
-        unique=True,
-        name="solved_problems_user_slug_unique",
-    )
+    try:
+        seed_problems()
+    except Exception:
+        logger.exception("seed_problems failed; starting with partial catalog")
+    try:
+        db.solved_problems.create_index(
+            [("clerk_user_id", 1), ("problem_slug", 1)],
+            unique=True,
+            name="solved_problems_user_slug_unique",
+        )
+    except Exception:
+        logger.exception("create_index for solved_problems failed")
     yield
     await close_redis()
 
