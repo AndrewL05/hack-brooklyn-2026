@@ -3,7 +3,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
 ARG VITE_API_URL=http://localhost:8000
 ARG VITE_CLERK_PUBLISHABLE_KEY
