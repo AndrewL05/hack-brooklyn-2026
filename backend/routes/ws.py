@@ -119,11 +119,13 @@ async def _handle(
             ttl = duration_minutes * 60 + 3600
             try:
                 redis = get_redis()
-                await redis.hset(
-                    f"session:{session_id}:state",
-                    mapping={"question_index": 0, "silence_count": 0, "timer_started_at": 0},
-                )
-                await redis.expire(f"session:{session_id}:state", ttl)
+                existing = await redis.hgetall(f"session:{session_id}:state")
+                if not existing:
+                    await redis.hset(
+                        f"session:{session_id}:state",
+                        mapping={"question_index": 0, "silence_count": 0, "timer_started_at": 0},
+                    )
+                    await redis.expire(f"session:{session_id}:state", ttl)
             except Exception as exc:
                 logger.warning("Failed to initialize session state in Redis: %s", exc)
             await broadcast(session_id, {
