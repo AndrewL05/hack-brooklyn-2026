@@ -295,17 +295,17 @@ export function Home() {
             <div className="flex flex-col">
               <motion.div variants={fadeUp} style={{ display:'flex', alignItems:'center', gap:10, marginBottom:24, fontFamily:'var(--font-mono)', fontSize:11, letterSpacing:'0.14em', textTransform:'uppercase', color:'#6B6B72' }}>
                 <span style={{ width:18, height:1, background:'#0B0B0E' }} />
-                The mock interview, rebuilt
+                The mock interview platform
               </motion.div>
 
               <motion.h1
                 variants={fadeUp}
                 style={{ fontFamily:'var(--font-display)', fontSize:'clamp(2.6rem,5.5vw,5.4rem)', fontWeight:600, lineHeight:0.96, letterSpacing:'-0.035em', color:'#0B0B0E' }}
               >
-                Sweat now,
+                Solve it.
                 <br />
                 <span style={{ position:'relative', display:'inline-block' }}>
-                  ship offers
+                  Explain it.
                   <svg
                     viewBox="0 0 280 14"
                     preserveAspectRatio="none"
@@ -319,7 +319,7 @@ export function Home() {
                   </svg>
                 </span>
                 <br />
-                <span style={{ color:'#9C9CA3', fontStyle:'italic' }}>later.</span>
+                <span style={{ color:'#9C9CA3', fontStyle:'italic' }}>Get the offer.</span>
               </motion.h1>
 
               <motion.p variants={fadeUp} style={{ marginTop:26, maxWidth:480, fontSize:17, lineHeight:1.55, color:'#38383D' }}>
@@ -478,19 +478,17 @@ export function Home() {
             style={{
               display:'flex', alignItems:'center', justifyContent:'space-between',
               padding:'36px 40px', borderRadius:24,
-              background:'linear-gradient(135deg, #0B0B0E 0%, #1F1F23 100%)',
+              background:'radial-gradient(167.08% 140.48% at 79.5% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 100%), radial-gradient(120.74% 124.92% at 7.26% 100%, rgb(73, 126, 233) 0%, rgb(116, 156, 255) 100%)',
               color:'#FAFAF7', position:'relative', overflow:'hidden',
               flexWrap:'wrap', gap:24,
             }}
           >
-            <div aria-hidden style={{ position:'absolute', inset:0, background:'radial-gradient(800px 200px at 80% 100%, rgba(245,97,43,0.30), transparent 60%)', pointerEvents:'none' }} />
-
             <div style={{ position:'relative' }}>
               <h3 style={{ fontSize:'clamp(1.5rem,3vw,2.25rem)', fontWeight:600, letterSpacing:'-0.025em', fontFamily:'var(--font-display)' }}>
                 Your next interview is{' '}
-                <span style={{ color:ORANGE }}>waiting</span>.
+                <span style={{ color:'#fff' }}>waiting</span>.
               </h3>
-              <p style={{ color:'#9C9CA3', marginTop:6, fontSize:15 }}>
+              <p style={{ color:'rgba(255,255,255,0.65)', marginTop:6, fontSize:15 }}>
                 Set up a mock session in under 60 seconds. Start with one.
               </p>
             </div>
@@ -498,11 +496,11 @@ export function Home() {
             <div style={{ position:'relative', display:'flex', gap:12 }}>
               <button
                 onClick={() => navigate('/setup')}
-                style={{ display:'inline-flex', alignItems:'center', gap:10, padding:'14px 22px', background:ORANGE, color:'#0B0B0E', borderRadius:999, fontWeight:500, fontSize:15, letterSpacing:'-0.01em', cursor:'pointer', border:'none', transition:'transform .35s cubic-bezier(.2,.8,.2,1)', fontFamily:'inherit' }}
+                style={{ display:'inline-flex', alignItems:'center', gap:10, padding:'14px 22px', background:'linear-gradient(180deg, #0544a9 0%,rgb(106, 116, 131) 100%)', color:'#fff', borderRadius:999, fontWeight:500, fontSize:15, letterSpacing:'-0.01em', cursor:'pointer', border:'none', transition:'transform .35s cubic-bezier(.2,.8,.2,1)', fontFamily:'inherit' }}
                 onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-1px)')}
                 onMouseLeave={e => (e.currentTarget.style.transform = '')}
               >
-                <span style={{ width:6, height:6, borderRadius:99, background:'#0B0B0E' }} />
+                <span style={{ width:6, height:6, borderRadius:99, background:'#fff' }} />
                 Start practicing
                 <span>→</span>
               </button>
