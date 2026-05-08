@@ -56,14 +56,14 @@ const INTERVIEW_TYPES = [
 
 // Persona accent colors
 const PERSONA_COLORS: Record<string, string> = {
-  friendly:   '#15A874',
+  friendly:   '#22c55e',
   neutral:    '#5B5BD6',
-  intense:    '#F5612B',
-  skeptical:  '#E8556B',
-  supportive: '#15A874',
+  intense:    '#22c55e',
+  skeptical:  '#f87171',
+  supportive: '#22c55e',
   corporate:  '#5B5BD6',
-  pressure:   '#F5612B',
-  probing:    '#E8556B',
+  pressure:   '#22c55e',
+  probing:    '#f87171',
 }
 
 const PERSONA_TONE_LABELS: Record<string, string> = {
@@ -120,24 +120,24 @@ function OptionCard({
     <button
       onClick={onClick}
       className={cn(
-        'group w-full rounded-2xl border p-5 text-left transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#F5612B] focus-visible:outline-offset-2',
+        'group w-full rounded-2xl border p-5 text-left transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ember focus-visible:outline-offset-2',
         selected
-          ? 'border-[#F5612B] bg-[rgba(245,97,43,0.05)] shadow-[0_10px_30px_-16px_rgba(245,97,43,0.40)]'
-          : 'border-black/[0.08] bg-white shadow-[0_1px_2px_rgba(11,11,14,0.04),0_4px_12px_-8px_rgba(11,11,14,0.08)] hover:border-black/[0.18] hover:shadow-[0_2px_4px_rgba(11,11,14,0.06),0_8px_24px_-12px_rgba(11,11,14,0.12)]'
+          ? 'border-ember/60 bg-ember/[0.06] shadow-[0_10px_30px_-16px_rgba(34,197,94,0.30)]'
+          : 'border-white/[0.07] bg-ink-900 shadow-card hover:border-white/[0.15] hover:shadow-card-hover'
       )}
     >
       {tag && (
-        <p className={cn('mb-2 font-mono text-[10px] uppercase tracking-widest', selected ? 'text-[#F5612B]' : 'text-[#9C9CA3]')}>
+        <p className={cn('mb-2 font-mono text-[10px] uppercase tracking-widest', selected ? 'text-ember' : 'text-paper-faint')}>
           {tag}
         </p>
       )}
       <p
-        className={cn('text-base font-semibold', selected ? 'text-[#0B0B0E]' : 'text-[#38383D] group-hover:text-[#0B0B0E]')}
+        className={cn('text-base font-semibold', selected ? 'text-paper' : 'text-paper-dim group-hover:text-paper')}
         style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.01em' }}
       >
         {label}
       </p>
-      {hint && <p className="mt-1.5 text-sm leading-relaxed text-[#6B6B72]">{hint}</p>}
+      {hint && <p className="mt-1.5 text-sm leading-relaxed text-paper-faint">{hint}</p>}
     </button>
   )
 }
@@ -155,10 +155,10 @@ function PersonaCard({
     <button
       onClick={onClick}
       className={cn(
-        'group w-full rounded-2xl border p-[22px] text-left transition-all duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#F5612B] focus-visible:outline-offset-2',
+        'group w-full rounded-2xl border p-[22px] text-left transition-all duration-200 hover:scale-[1.01] transition-transform focus-visible:outline focus-visible:outline-2 focus-visible:outline-ember focus-visible:outline-offset-2',
         selected
-          ? 'border-[#F5612B] bg-[rgba(245,97,43,0.05)] shadow-[0_10px_30px_-16px_rgba(245,97,43,0.40)]'
-          : 'border-black/[0.08] bg-white shadow-[0_1px_2px_rgba(11,11,14,0.04),0_4px_12px_-8px_rgba(11,11,14,0.08)] hover:border-black/[0.18]'
+          ? 'border-ember/60 bg-ember/[0.06] shadow-[0_10px_30px_-16px_rgba(34,197,94,0.30)]'
+          : 'border-white/[0.07] bg-ink-900 shadow-card hover:border-white/[0.15]'
       )}
     >
       <div className="flex items-center gap-3 mb-3">
@@ -171,20 +171,20 @@ function PersonaCard({
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="text-[17px] font-semibold text-[#0B0B0E]" style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.01em' }}>
+          <p className="text-[17px] font-semibold text-paper" style={{ fontFamily: 'var(--font-display)', letterSpacing: '-0.01em' }}>
             {name}
           </p>
-          <p className="font-mono text-[10px] uppercase tracking-widest text-[#9C9CA3] mt-0.5">{tone}</p>
+          <p className="font-mono text-[10px] uppercase tracking-widest text-paper-faint mt-0.5">{tone}</p>
         </div>
 
         {selected && (
-          <span className="shrink-0 rounded-full bg-[#F5612B] px-2.5 py-1 font-mono text-[10px] font-semibold text-white">
+          <span className="shrink-0 rounded-full bg-ember text-ink-950 px-2.5 py-1 font-mono text-[10px] font-semibold">
             SELECTED
           </span>
         )}
       </div>
 
-      <p className="text-[13.5px] leading-relaxed text-[#38383D]">{description}</p>
+      <p className="text-[13.5px] leading-relaxed text-paper-dim">{description}</p>
     </button>
   )
 }
@@ -379,23 +379,23 @@ export function Setup() {
   const totalLabel   = String(total).padStart(2, '0')
 
   return (
-    <div className="min-h-screen" style={{ background: '#FAFAF7' }}>
+    <div className="min-h-screen bg-ink-950">
 
       {/* ── Top bar ── */}
-      <div className="bg-[#FAFAF7]" style={{ padding: '18px 36px' }}>
+      <div className="bg-ink-950 border-b border-white/[0.06]" style={{ padding: '18px 36px' }}>
         <div className="mx-auto max-w-5xl flex items-center gap-4">
           {/* Logo + step label */}
           <div className="flex items-center gap-3 shrink-0">
           </div>
 
-          <span className="font-mono text-[11px] uppercase tracking-widest text-[#9C9CA3] ml-4">
+          <span className="font-mono text-[11px] uppercase tracking-widest text-paper-faint ml-4">
             Session setup · {stepNumLabel} / {totalLabel}
           </span>
 
           {/* Progress bar */}
-          <div className="flex-1 mx-4 h-[3px] rounded-full overflow-hidden bg-[#E2DFD6]">
+          <div className="flex-1 mx-4 h-[3px] rounded-full overflow-hidden bg-ink-700/60">
             <motion.div
-              className="h-full rounded-full bg-[#F5612B]"
+              className="h-full rounded-full bg-ember"
               animate={{ width: `${progressPct}%` }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
             />
@@ -403,7 +403,7 @@ export function Setup() {
 
           <button
             onClick={() => navigate('/')}
-            className="font-mono text-[11px] text-[#9C9CA3] hover:text-[#0B0B0E] transition-colors"
+            className="font-mono text-[11px] text-paper-faint hover:text-paper transition-colors"
           >
             ✕ Cancel
           </button>
@@ -425,18 +425,18 @@ export function Setup() {
                 exit="exit"
               >
                 {/* Step eyebrow */}
-                <p className="font-mono text-[11px] uppercase tracking-widest text-[#F5612B] mb-2">
+                <p className="font-mono text-[11px] uppercase tracking-widest text-ember mb-2">
                   {eyebrow}
                 </p>
 
                 {/* Heading */}
                 <h1
-                  className="font-semibold text-[#0B0B0E] mb-3"
+                  className="font-semibold text-paper mb-3"
                   style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem,4vw,3.25rem)', letterSpacing: '-0.03em', lineHeight: 1 }}
                 >
                   {title}
                 </h1>
-                <p className="text-[15px] text-[#6B6B72] mb-10 max-w-[520px] leading-relaxed">{subtitle}</p>
+                <p className="text-[15px] text-paper-dim mb-10 max-w-[520px] leading-relaxed">{subtitle}</p>
 
                 {/* ─── Step 1: Interview type ─── */}
                 {step === 1 && (
@@ -460,9 +460,9 @@ export function Setup() {
                     <input type="file" accept=".pdf" className="hidden" ref={fileInputRef} onChange={handleFileUpload} />
                     <div
                       onClick={() => !state.resumeFile && fileInputRef.current?.click()}
-                      className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-black/[0.12] bg-white p-16 text-center transition-colors hover:border-[#F5612B]/40 hover:bg-[rgba(245,97,43,0.02)] cursor-pointer"
+                      className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-white/[0.1] bg-ink-900 p-16 text-center transition-colors hover:border-ember/40 hover:bg-ember/[0.03] cursor-pointer"
                     >
-                      <div className="mb-5 rounded-full bg-[#F4F3EE] p-4 text-[#9C9CA3]">
+                      <div className="mb-5 rounded-full bg-ink-800 p-4 text-paper-faint">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
                           <polyline points="12 12 12 18" /><polyline points="9 15 12 18 15 15" />
@@ -470,22 +470,22 @@ export function Setup() {
                       </div>
                       {state.resumeFile ? (
                         <div className="flex flex-col items-center gap-2">
-                          <p className="font-semibold text-[#0B0B0E]" style={{ fontFamily: 'var(--font-display)' }}>{state.resumeFile.name}</p>
+                          <p className="font-semibold text-paper" style={{ fontFamily: 'var(--font-display)' }}>{state.resumeFile.name}</p>
                           {isUploading
-                            ? <p className="text-sm text-[#F5612B] animate-pulse">Parsing and uploading…</p>
-                            : <p className="text-sm text-[#15A874] font-medium">✓ Ready</p>
+                            ? <p className="text-sm text-ember animate-pulse">Parsing and uploading…</p>
+                            : <p className="text-sm text-moss font-medium">✓ Ready</p>
                           }
                           <button
                             onClick={e => { e.stopPropagation(); fileInputRef.current?.click() }}
-                            className="mt-3 font-mono text-xs text-[#6B6B72] underline hover:text-[#0B0B0E]"
+                            className="mt-3 font-mono text-xs text-paper-faint underline hover:text-paper"
                           >
                             Choose a different file
                           </button>
                         </div>
                       ) : (
                         <>
-                          <p className="font-semibold text-[#0B0B0E] mb-2" style={{ fontFamily: 'var(--font-display)', fontSize: 17 }}>Drop your resume PDF here</p>
-                          <p className="text-sm text-[#9C9CA3] mb-6">or click to browse — PDF only</p>
+                          <p className="font-semibold text-paper mb-2" style={{ fontFamily: 'var(--font-display)', fontSize: 17 }}>Drop your resume PDF here</p>
+                          <p className="text-sm text-paper-faint mb-6">or click to browse — PDF only</p>
                           <button
                             onClick={e => { e.stopPropagation(); fileInputRef.current?.click() }}
                             className="btn-primary text-sm"
@@ -577,7 +577,7 @@ export function Setup() {
               {step > 1 && (
                 <button
                   onClick={() => setStep(s => s - 1)}
-                  className="font-mono text-xs text-[#9C9CA3] hover:text-[#0B0B0E] transition-colors"
+                  className="font-mono text-xs text-paper-faint hover:text-paper transition-colors"
                 >
                   ← Back
                 </button>
@@ -618,39 +618,42 @@ export function Setup() {
 
           {/* ─── Summary rail ─── */}
           <aside className="hidden lg:block">
-            <div className="sticky top-24 rounded-2xl border border-black/[0.08] bg-white shadow-[0_1px_2px_rgba(11,11,14,0.04),0_8px_24px_-12px_rgba(11,11,14,0.10)] overflow-hidden">
-              <div className="px-6 pt-5 pb-4 border-b border-black/[0.06]">
-                <p className="font-mono text-[10px] uppercase tracking-widest text-[#9C9CA3]">Your session</p>
+            <div className="sticky top-24 rounded-2xl border border-white/[0.07] bg-ink-900 shadow-card overflow-hidden">
+              <div className="px-6 pt-5 pb-4 border-b border-white/[0.05]">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-paper-faint">Your session</p>
               </div>
               <div className="px-6 py-2">
                 {summaryRows.map(({ label, value }, i) => (
-                  <div
+                  <motion.div
                     key={label}
-                    className={cn('flex items-center justify-between py-[10px]', i < summaryRows.length - 1 && 'border-b border-dashed border-black/[0.07]')}
+                    initial={{ opacity: 0, x: 8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: i * 0.05 }}
+                    className={cn('flex items-center justify-between py-[10px]', i < summaryRows.length - 1 && 'border-b border-dashed border-white/[0.06]')}
                   >
-                    <span className="font-mono text-[12px] text-[#9C9CA3]">{label}</span>
-                    <span className={cn('text-[13px] font-medium', value ? 'text-[#0B0B0E]' : 'text-[#9C9CA3]/40')}>
+                    <span className="font-mono text-[12px] text-paper-faint">{label}</span>
+                    <span className={cn('text-[13px] font-medium', value ? 'text-paper' : 'text-paper-faint/30')}>
                       {value ?? '—'}
                     </span>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
 
               {/* HEADS UP box */}
               {headsUp && (
-                <div className="mx-4 mb-4 mt-1 rounded-xl bg-[#F4F3EE] p-4">
+                <div className="mx-4 mb-4 mt-1 rounded-xl bg-ink-800 p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="w-[6px] h-[6px] rounded-full bg-[#F5612B] shrink-0" />
-                    <span className="font-mono text-[10px] uppercase tracking-widest text-[#1F1F23]">Heads up</span>
+                    <span className="w-[6px] h-[6px] rounded-full bg-ember shrink-0" />
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-paper">Heads up</span>
                   </div>
-                  <p className="text-[12.5px] text-[#38383D] leading-relaxed">{headsUp}</p>
+                  <p className="text-[12.5px] text-paper-dim leading-relaxed">{headsUp}</p>
                 </div>
               )}
 
               {/* Empty state */}
               {summaryRows.every(r => !r.value) && !headsUp && (
                 <div className="px-6 pb-5">
-                  <p className="text-[12px] text-[#9C9CA3] leading-relaxed">
+                  <p className="text-[12px] text-paper-faint leading-relaxed">
                     Your choices will appear here as you go.
                   </p>
                 </div>
