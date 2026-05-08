@@ -151,7 +151,7 @@ function CodeTimeline({ snapshots, idx, onIdxChange }: {
           options={{
             readOnly: true,
             fontSize: 12,
-            fontFamily: '"JetBrains Mono", monospace',
+            fontFamily: '"Geist Mono", "JetBrains Mono", monospace',
             lineHeight: 1.6,
             padding: { top: 12, bottom: 12 },
             minimap: { enabled: false },
@@ -305,8 +305,8 @@ export function Feedback() {
         <div className="mx-auto flex max-w-5xl items-center gap-3 px-6 py-3">
           <div className="flex items-center gap-2">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-              <path d="M4 18 L12 4 L20 18 L15 18 L12 12 L9 18 Z" fill="#0B0B0E" />
-              <circle cx="19.5" cy="4.5" r="2.2" fill="#F5612B" />
+              <path d="M4 18 L12 4 L20 18 L15 18 L12 12 L9 18 Z" fill="#e2e8f4" />
+              <circle cx="19.5" cy="4.5" r="2.2" fill="#22c55e" />
             </svg>
             <span className="font-display text-sm font-bold text-paper" style={{ letterSpacing: '-0.02em' }}>Intervue</span>
           </div>
@@ -359,7 +359,7 @@ export function Feedback() {
                   <div className="h-1.5 overflow-hidden rounded-full bg-ink-700/40">
                     <motion.div
                       className="h-full rounded-full"
-                      style={{ background: m.score >= 75 ? '#15A874' : m.score >= 55 ? '#F5612B' : '#E8556B' }}
+                      style={{ background: m.score >= 75 ? '#4ade80' : m.score >= 55 ? '#f59e0b' : '#f87171' }}
                       initial={{ width: 0 }}
                       animate={{ width: `${m.score}%` }}
                       transition={{ duration: 1, delay: 0.3, ease: 'easeOut' }}

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { BrowserScrollReveal } from '../components/BrowserScrollReveal'
 
 // ── Design tokens ────────────────────────────────────────
-const ORANGE = '#F5612B'
+const GREEN = '#22c55e'
 
 // ── Framer Motion variants ───────────────────────────────
 const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } }
@@ -19,12 +19,12 @@ type Token = [TokenColor, string]
 type Line = Token[]
 
 const COLORS: Record<TokenColor, string> = {
-  kw: '#A23ECC',
-  fn: '#1B6FD8',
-  pa: '#1F1F23',
-  op: '#6B6B72',
-  cm: '#15A874',
-  sp: '#1F1F23',
+  kw: '#c792ea',  // purple
+  fn: '#82aaff',  // blue
+  pa: '#e2e8f4',  // light text
+  op: '#4a5568',  // dimmed
+  cm: '#22c55e',  // green (comments = primary accent)
+  sp: '#e2e8f4',
 }
 
 const CODE_LINES: Line[] = [
@@ -61,22 +61,22 @@ function TypingCode({ active }: { active: boolean }) {
 
   return (
     <div style={{
-      background: '#FCFBF7',
-      border: '1px solid rgba(11,11,14,0.08)',
+      background: '#13151c',
+      border: '1px solid rgba(255,255,255,0.07)',
       borderRadius: 14,
       padding: '14px 16px 18px',
       fontFamily: 'var(--font-mono)',
       fontSize: 12.5,
       lineHeight: 1.75,
-      boxShadow: '0 1px 2px rgba(11,11,14,0.04), 0 8px 24px -12px rgba(11,11,14,0.10)',
+      boxShadow: '0 1px 0 rgba(255,255,255,0.04), 0 8px 24px -8px rgba(0,0,0,0.7)',
     }}>
       {/* Chrome bar */}
-      <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:10, paddingBottom:10, borderBottom:'1px dashed rgba(11,11,14,0.08)' }}>
+      <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:10, paddingBottom:10, borderBottom:'1px dashed rgba(255,255,255,0.06)' }}>
         <span style={{ width:9, height:9, borderRadius:99, background:'#FF5F57' }} />
         <span style={{ width:9, height:9, borderRadius:99, background:'#FEBC2E' }} />
         <span style={{ width:9, height:9, borderRadius:99, background:'#28C840' }} />
-        <span style={{ marginLeft:8, fontFamily:'var(--font-mono)', fontSize:11, color:'#9C9CA3' }}>solution.py</span>
-        <span style={{ marginLeft:'auto', fontFamily:'var(--font-mono)', fontSize:10, color:'#9C9CA3' }}>● running</span>
+        <span style={{ marginLeft:8, fontFamily:'var(--font-mono)', fontSize:11, color:'#4a5568' }}>solution.py</span>
+        <span style={{ marginLeft:'auto', fontFamily:'var(--font-mono)', fontSize:10, color:'#4a5568' }}>● running</span>
       </div>
       {CODE_LINES.map((toks, li) => {
         const lineText = toks.map(t => t[1]).join('')
@@ -85,7 +85,7 @@ function TypingCode({ active }: { active: boolean }) {
         let printed = 0
         return (
           <div key={li} style={{ display:'flex', gap:14, minHeight:'1.75em' }}>
-            <span style={{ color:'#C7C5BC', width:14, textAlign:'right' }}>{li + 1}</span>
+            <span style={{ color:'#4a5568', width:14, textAlign:'right' }}>{li + 1}</span>
             <span style={{ whiteSpace:'pre' }}>
               {toks.map(([color, seg], ti) => {
                 const remaining = Math.max(0, localTick - printed)
@@ -94,7 +94,7 @@ function TypingCode({ active }: { active: boolean }) {
                 return <span key={ti} style={{ color: COLORS[color] }}>{visible}</span>
               })}
               {tick >= start && tick < start + lineText.length + 1 && (
-                <span style={{ display:'inline-block', width:7, height:14, background:ORANGE, verticalAlign:'-2px', marginLeft:1, animation:'blink 1s steps(2) infinite' }} />
+                <span style={{ display:'inline-block', width:7, height:14, background: GREEN, verticalAlign:'-2px', marginLeft:1, animation:'blink 1s steps(2) infinite' }} />
               )}
             </span>
           </div>
@@ -127,32 +127,32 @@ function Transcript({ active }: { active: boolean }) {
 
   return (
     <div style={{
-      background: '#FFFFFF',
-      border: '1px solid rgba(11,11,14,0.08)',
+      background: '#13151c',
+      border: '1px solid rgba(255,255,255,0.07)',
       borderRadius: 14,
       padding: 16,
-      boxShadow: '0 1px 2px rgba(11,11,14,0.04), 0 8px 24px -12px rgba(11,11,14,0.10)',
+      boxShadow: '0 1px 0 rgba(255,255,255,0.04), 0 8px 24px -8px rgba(0,0,0,0.7)',
       display: 'flex', flexDirection: 'column', gap: 10,
       minHeight: 220,
     }}>
       <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:6 }}>
         <span className="live-dot" />
-        <span style={{ fontFamily:'var(--font-mono)', fontSize:11, color:'#1F1F23', letterSpacing:'.06em' }}>LIVE TRANSCRIPT</span>
-        <span style={{ marginLeft:'auto', fontFamily:'var(--font-mono)', fontSize:11, color:'#9C9CA3' }}>00:04:21</span>
+        <span style={{ fontFamily:'var(--font-mono)', fontSize:11, color:'#e2e8f4', letterSpacing:'.06em' }}>LIVE TRANSCRIPT</span>
+        <span style={{ marginLeft:'auto', fontFamily:'var(--font-mono)', fontSize:11, color:'#4a5568' }}>00:04:21</span>
       </div>
       {TRANSCRIPT_LINES.slice(0, shown).map((l, i) => (
         <div key={i} style={{ display:'flex', gap:10, alignItems:'flex-start', animation:'msg-in .36s cubic-bezier(.2,.8,.2,1) both' }}>
           <span style={{
             fontFamily:'var(--font-mono)', fontSize:10, fontWeight:600,
             padding:'3px 7px', borderRadius:6, marginTop:2,
-            background:    l.who === 'int' ? '#F4F3EE'                     : 'rgba(245,97,43,0.10)',
-            color:         l.who === 'int' ? '#1F1F23'                     : ORANGE,
-            border: `1px solid ${l.who === 'int' ? 'rgba(11,11,14,0.06)' : 'rgba(245,97,43,0.20)'}`,
+            background:    l.who === 'int' ? 'rgba(255,255,255,0.08)'       : 'rgba(34,197,94,0.10)',
+            color:         l.who === 'int' ? '#8892a4'                      : '#22c55e',
+            border: `1px solid ${l.who === 'int' ? 'rgba(255,255,255,0.08)' : 'rgba(34,197,94,0.20)'}`,
             minWidth: 36, textAlign:'center',
           }}>
             {l.who === 'int' ? 'AI' : 'YOU'}
           </span>
-          <p style={{ fontSize:13.5, lineHeight:1.55, color:'#1F1F23' }}>{l.t}</p>
+          <p style={{ fontSize:13.5, lineHeight:1.55, color:'#e2e8f4' }}>{l.t}</p>
         </div>
       ))}
       <style>{`@keyframes msg-in { from{opacity:0;transform:translateY(6px);} to{opacity:1;transform:none;} }`}</style>
@@ -175,7 +175,7 @@ function Dial({ value, label, color, delay = 0 }: { value: number; label: string
     <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:10 }}>
       <div style={{ position:'relative', width:96, height:96 }}>
         <svg width="96" height="96" viewBox="0 0 96 96">
-          <circle cx="48" cy="48" r={r} stroke="rgba(11,11,14,0.08)" strokeWidth="6" fill="none" />
+          <circle cx="48" cy="48" r={r} stroke="rgba(255,255,255,0.08)" strokeWidth="6" fill="none" />
           <circle
             cx="48" cy="48" r={r} stroke={color} strokeWidth="6" fill="none"
             strokeLinecap="round"
@@ -185,13 +185,13 @@ function Dial({ value, label, color, delay = 0 }: { value: number; label: string
           />
         </svg>
         <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column' }}>
-          <span style={{ fontSize:28, fontWeight:600, letterSpacing:'-0.02em', fontFamily:'var(--font-display)', color:'#0B0B0E' }}>
+          <span style={{ fontSize:28, fontWeight:600, letterSpacing:'-0.02em', fontFamily:'var(--font-display)', color:'#e2e8f4' }}>
             {Math.round(v)}
           </span>
-          <span style={{ fontFamily:'var(--font-mono)', fontSize:9, color:'#6B6B72' }}>/100</span>
+          <span style={{ fontFamily:'var(--font-mono)', fontSize:9, color:'#4a5568' }}>/100</span>
         </div>
       </div>
-      <span style={{ fontFamily:'var(--font-mono)', fontSize:11, letterSpacing:'.06em', color:'#38383D', textTransform:'uppercase' }}>
+      <span style={{ fontFamily:'var(--font-mono)', fontSize:11, letterSpacing:'.06em', color:'#8892a4', textTransform:'uppercase' }}>
         {label}
       </span>
     </div>
@@ -234,16 +234,16 @@ function FeatureRow({ k, title, body }: { k: string; title: string; body: string
         alignItems: 'center',
         gap: 24,
         padding: hovered ? '28px 14px' : '28px 0',
-        borderBottom: '1px solid rgba(11,11,14,0.08)',
-        background: hovered ? 'rgba(245,97,43,0.03)' : 'transparent',
+        borderBottom: '1px solid rgba(255,255,255,0.08)',
+        background: hovered ? 'rgba(34,197,94,0.04)' : 'transparent',
         cursor: 'pointer',
         transition: 'background 0.2s, padding 0.2s',
       }}
     >
-      <span style={{ fontSize:42, fontWeight:600, color:ORANGE, letterSpacing:'-0.02em', fontFamily:'var(--font-display)' }}>{k}</span>
-      <h3 style={{ fontSize:26, fontWeight:600, letterSpacing:'-0.02em', fontFamily:'var(--font-display)', color:'#0B0B0E' }}>{title}</h3>
-      <p style={{ color:'#38383D', fontSize:15, lineHeight:1.55 }}>{body}</p>
-      <span style={{ fontFamily:'var(--font-mono)', fontSize:18, color:'#0B0B0E' }}>↗</span>
+      <span style={{ fontSize:42, fontWeight:600, color: GREEN, letterSpacing:'-0.02em', fontFamily:'var(--font-display)' }}>{k}</span>
+      <h3 style={{ fontSize:26, fontWeight:600, letterSpacing:'-0.02em', fontFamily:'var(--font-display)', color:'#e2e8f4' }}>{title}</h3>
+      <p style={{ color:'#8892a4', fontSize:15, lineHeight:1.55 }}>{body}</p>
+      <span style={{ fontFamily:'var(--font-mono)', fontSize:18, color:'#e2e8f4' }}>↗</span>
     </div>
   )
 }
@@ -252,7 +252,7 @@ function FeatureRow({ k, title, body }: { k: string; title: string; body: string
 const COMPANIES = ['Google', 'Meta', 'Amazon', 'Apple', 'Microsoft', 'Stripe', 'Netflix', 'Airbnb', 'OpenAI', 'Anthropic', 'Databricks', 'Figma']
 
 // ── Social proof avatars ─────────────────────────────────
-const AVATAR_COLORS = ['#F5C9B5', '#CDD8F4', '#D4ECDD', '#F5DDB5']
+const AVATAR_COLORS = ['rgba(34,197,94,0.3)', 'rgba(130,170,255,0.3)', 'rgba(248,113,113,0.3)', 'rgba(251,191,36,0.3)']
 
 // ── Main component ───────────────────────────────────────
 export function Home() {
@@ -273,14 +273,21 @@ export function Home() {
   }, [])
 
   return (
-    <div style={{ background:'#FAFAF7', minHeight:'100vh' }}>
+    <div style={{ background:'#0c0e14', minHeight:'100vh' }}>
+
+      {/* ── Radial hero background gradient ── */}
+      <div aria-hidden style={{
+        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+        background: 'radial-gradient(ellipse at 60% 0%, rgba(34,197,94,0.06) 0%, transparent 60%)',
+        pointerEvents: 'none', zIndex: 0,
+      }} />
 
       {/* ── Background blob ── */}
       <div
         aria-hidden
         style={{
           position:'fixed', top:-180, right:-120, width:560, height:560,
-          background:'radial-gradient(closest-side, rgba(245,97,43,0.12), transparent 70%)',
+          background:'radial-gradient(closest-side, rgba(34,197,94,0.08), transparent 70%)',
           pointerEvents:'none', zIndex:0,
         }}
       />
@@ -299,14 +306,14 @@ export function Home() {
           >
             {/* Left: copy */}
             <div className="flex flex-col">
-              <motion.div variants={fadeUp} style={{ display:'flex', alignItems:'center', gap:10, marginBottom:24, fontFamily:'var(--font-mono)', fontSize:11, letterSpacing:'0.14em', textTransform:'uppercase', color:'#6B6B72' }}>
-                <span style={{ width:18, height:1, background:'#0B0B0E' }} />
+              <motion.div variants={fadeUp} style={{ display:'flex', alignItems:'center', gap:10, marginBottom:24, fontFamily:'var(--font-mono)', fontSize:11, letterSpacing:'0.14em', textTransform:'uppercase', color:'#8892a4' }}>
+                <span style={{ width:18, height:1, background:'#e2e8f4' }} />
                 The mock interview platform
               </motion.div>
 
               <motion.h1
                 variants={fadeUp}
-                style={{ fontFamily:'var(--font-display)', fontSize:'clamp(2.6rem,5.5vw,5.4rem)', fontWeight:600, lineHeight:0.96, letterSpacing:'-0.035em', color:'#0B0B0E' }}
+                style={{ fontFamily:'var(--font-display)', fontSize:'clamp(2.6rem,5.5vw,5.4rem)', fontWeight:600, lineHeight:0.96, letterSpacing:'-0.035em', color:'#e2e8f4' }}
               >
                 Solve it.
                 <br />
@@ -319,16 +326,16 @@ export function Home() {
                   >
                     <path
                       d="M2 8 C 60 1, 140 13, 278 5"
-                      stroke={ORANGE} strokeWidth="3" fill="none" strokeLinecap="round"
+                      stroke={GREEN} strokeWidth="3" fill="none" strokeLinecap="round"
                       style={{ strokeDasharray:600, strokeDashoffset:600, animation:'underline-draw 1.2s 0.4s ease-out forwards' }}
                     />
                   </svg>
                 </span>
                 <br />
-                <span style={{ color:'#9C9CA3', fontStyle:'italic' }}>Get the offer.</span>
+                <span style={{ color:'#4a5568', fontStyle:'italic' }}>Get the offer.</span>
               </motion.h1>
 
-              <motion.p variants={fadeUp} style={{ marginTop:26, maxWidth:480, fontSize:17, lineHeight:1.55, color:'#38383D' }}>
+              <motion.p variants={fadeUp} style={{ marginTop:26, maxWidth:480, fontSize:17, lineHeight:1.55, color:'#8892a4' }}>
                 A live AI interviewer that <em>actually interrupts you</em>, pushes back on hand-wavy answers, and grades you on how you sound — not just whether the tests pass.
               </motion.p>
 
@@ -350,17 +357,17 @@ export function Home() {
               </motion.div>
 
               {/* Social proof */}
-              <motion.div variants={fadeUp} style={{ display:'flex', alignItems:'center', gap:24, marginTop:40, color:'#6B6B72', fontSize:13 }}>
+              <motion.div variants={fadeUp} style={{ display:'flex', alignItems:'center', gap:24, marginTop:40, color:'#8892a4', fontSize:13 }}>
                 <div style={{ display:'flex', alignItems:'center', gap:8 }}>
                   <span style={{ display:'inline-flex' }}>
                     {AVATAR_COLORS.map((bg, i) => (
-                      <span key={i} style={{ width:24, height:24, borderRadius:99, background:bg, border:'2px solid #FAFAF7', marginLeft:i?-8:0, display:'inline-block' }} />
+                      <span key={i} style={{ width:24, height:24, borderRadius:99, background:bg, border:'2px solid #0c0e14', marginLeft:i?-8:0, display:'inline-block' }} />
                     ))}
                   </span>
-                  <span><strong style={{ color:'#0B0B0E' }}>11,400+</strong> mocks run this week</span>
+                  <span><strong style={{ color:'#e2e8f4' }}>11,400+</strong> mocks run this week</span>
                 </div>
-                <div style={{ width:1, height:14, background:'rgba(11,11,14,0.14)' }} />
-                <div>★★★★★ <strong style={{ color:'#0B0B0E' }}>4.9</strong> · ProductHunt #1</div>
+                <div style={{ width:1, height:14, background:'rgba(255,255,255,0.1)' }} />
+                <div>★★★★★ <strong style={{ color:'#e2e8f4' }}>4.9</strong> · ProductHunt #1</div>
               </motion.div>
             </div>
 
@@ -372,15 +379,15 @@ export function Home() {
               <div style={{ position:'absolute', bottom:0, left:0, width:420, transform:'rotate(1.2deg)' }}>
                 <Transcript active={active} />
               </div>
-              <div style={{ position:'absolute', top:18, left:14, fontFamily:'var(--font-mono)', fontSize:11, color:'#9C9CA3', transform:'rotate(-4deg)' }}>
+              <div style={{ position:'absolute', top:18, left:14, fontFamily:'var(--font-mono)', fontSize:11, color:'#4a5568', transform:'rotate(-4deg)' }}>
                 ↘ live, every keystroke
               </div>
               <div style={{
                 position:'absolute', bottom:250, right:30,
-                fontFamily:'var(--font-mono)', fontSize:11, color:ORANGE,
+                fontFamily:'var(--font-mono)', fontSize:11, color:'#22c55e',
                 transform:'rotate(4deg)',
-                padding:'4px 10px', background:'rgba(245,97,43,0.10)', borderRadius:99,
-                border:'1px solid rgba(245,97,43,0.25)',
+                padding:'4px 10px', background:'rgba(34,197,94,0.10)', borderRadius:99,
+                border:'1px solid rgba(34,197,94,0.25)',
               }}>
                 ↑ AI interrupts here
               </div>
@@ -392,12 +399,12 @@ export function Home() {
       {/* ════════════════════════════════════════
           MARQUEE
       ════════════════════════════════════════ */}
-      <section style={{ padding:'40px 0 32px', borderTop:'1px solid rgba(11,11,14,0.08)', borderBottom:'1px solid rgba(11,11,14,0.08)', position:'relative', zIndex:1, overflow:'hidden' }}>
+      <section style={{ padding:'40px 0 32px', borderTop:'1px solid rgba(255,255,255,0.06)', borderBottom:'1px solid rgba(255,255,255,0.06)', position:'relative', zIndex:1, overflow:'hidden' }}>
         <p className="mono-eyebrow" style={{ textAlign:'center', marginBottom:18 }}>practice for the loop at</p>
-        <div style={{ overflow:'hidden', maskImage:'linear-gradient(to right, transparent, #000 8%, #000 92%, transparent)', WebkitMaskImage:'linear-gradient(to right, transparent, #000 8%, #000 92%, transparent)' }}>
+        <div style={{ overflow:'hidden', maskImage:'linear-gradient(to right, transparent, #0c0e14 8%, #0c0e14 92%, transparent)', WebkitMaskImage:'linear-gradient(to right, transparent, #0c0e14 8%, #0c0e14 92%, transparent)' }}>
           <div style={{ display:'flex', gap:64, width:'max-content', animation:'marquee 30s linear infinite', paddingLeft:36 }}>
             {[...COMPANIES, ...COMPANIES].map((co, i) => (
-              <span key={i} style={{ fontFamily:'var(--font-display)', fontWeight:600, fontSize:24, color:'#9C9CA3', letterSpacing:'-0.02em', whiteSpace:'nowrap' }}>
+              <span key={i} style={{ fontFamily:'var(--font-display)', fontWeight:600, fontSize:24, color:'#4a5568', letterSpacing:'-0.02em', whiteSpace:'nowrap' }}>
                 {co}
               </span>
             ))}
@@ -411,30 +418,37 @@ export function Home() {
       <section style={{ padding:'96px 36px 24px', position:'relative', zIndex:1 }}>
         <div style={{ maxWidth:1280, margin:'0 auto' }}>
           {/* Section eyebrow */}
-          <div className="mono-eyebrow" style={{ display:'flex', alignItems:'center', gap:14, marginBottom:36 }}>
-            <span style={{ fontWeight:600, color:'#0B0B0E' }}>№ 02</span>
-            <span style={{ flex:1, height:1, background:'rgba(11,11,14,0.14)' }} />
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="mono-eyebrow"
+            style={{ display:'flex', alignItems:'center', gap:14, marginBottom:36 }}
+          >
+            <span style={{ fontWeight:600, color:'#e2e8f4' }}>№ 02</span>
+            <span style={{ flex:1, height:1, background:'rgba(255,255,255,0.1)' }} />
             <span>scored on what actually matters</span>
-          </div>
+          </motion.div>
 
           <div style={{ display:'grid', gridTemplateColumns:'1.2fr 1fr', gap:64, alignItems:'center' }}>
-            <h2 style={{ fontSize:'clamp(2rem,4vw,4rem)', fontWeight:600, letterSpacing:'-0.035em', lineHeight:0.98, fontFamily:'var(--font-display)', color:'#0B0B0E' }}>
+            <h2 style={{ fontSize:'clamp(2rem,4vw,4rem)', fontWeight:600, letterSpacing:'-0.035em', lineHeight:0.98, fontFamily:'var(--font-display)', color:'#e2e8f4' }}>
               We don't grade you<br />on tests passed.<br />
-              <span style={{ color:'#9C9CA3' }}>We grade you on </span><br />
+              <span style={{ color:'#4a5568' }}>We grade you on </span><br />
               how you{' '}
-              <em style={{ color:ORANGE, fontStyle:'italic' }}>sound</em>.
+              <em style={{ color: GREEN, fontStyle:'italic' }}>sound</em>.
             </h2>
 
             <div
               ref={scoreRef}
               style={{
                 display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:32, padding:32,
-                background:'#FFFFFF', border:'1px solid rgba(11,11,14,0.08)',
-                borderRadius:20, boxShadow:'0 1px 2px rgba(11,11,14,0.04), 0 8px 24px -12px rgba(11,11,14,0.10)',
+                background:'#13151c', border:'1px solid rgba(255,255,255,0.07)',
+                borderRadius:20, boxShadow:'0 1px 0 rgba(255,255,255,0.04), 0 8px 24px -8px rgba(0,0,0,0.7)',
               }}
             >
               {scoresVisible && <>
-                <Dial value={84} label="Clarity"     color={ORANGE}    delay={0}   />
+                <Dial value={84} label="Clarity"     color={GREEN}     delay={0}   />
                 <Dial value={71} label="Confidence"  color="#5B5BD6"   delay={200} />
                 <Dial value={92} label="Structure"   color="#15A874"   delay={400} />
                 <Dial value={66} label="Conciseness" color="#E8A317"   delay={600} />
@@ -459,13 +473,20 @@ export function Home() {
       ════════════════════════════════════════ */}
       <section style={{ padding:'96px 36px 24px', position:'relative', zIndex:1 }}>
         <div style={{ maxWidth:1280, margin:'0 auto' }}>
-          <div className="mono-eyebrow" style={{ display:'flex', alignItems:'center', gap:14, marginBottom:36 }}>
-            <span style={{ fontWeight:600, color:'#0B0B0E' }}>№ 03</span>
-            <span style={{ flex:1, height:1, background:'rgba(11,11,14,0.14)' }} />
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="mono-eyebrow"
+            style={{ display:'flex', alignItems:'center', gap:14, marginBottom:36 }}
+          >
+            <span style={{ fontWeight:600, color:'#e2e8f4' }}>№ 03</span>
+            <span style={{ flex:1, height:1, background:'rgba(255,255,255,0.1)' }} />
             <span>built for the way real loops feel</span>
-          </div>
+          </motion.div>
 
-          <div style={{ borderTop:'1px solid #0B0B0E' }}>
+          <div style={{ borderTop:'1px solid rgba(255,255,255,0.1)' }}>
             {FEATURES.map(f => <FeatureRow key={f.k} {...f} />)}
           </div>
         </div>
@@ -484,17 +505,19 @@ export function Home() {
             style={{
               display:'flex', alignItems:'center', justifyContent:'space-between',
               padding:'36px 40px', borderRadius:24,
-              background:'radial-gradient(167.08% 140.48% at 79.5% 0%, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 100%), radial-gradient(120.74% 124.92% at 7.26% 100%, rgb(73, 126, 233) 0%, rgb(116, 156, 255) 100%)',
-              color:'#FAFAF7', position:'relative', overflow:'hidden',
+              background:'linear-gradient(135deg, #13151c 0%, #191d28 100%)',
+              border:'1px solid rgba(34,197,94,0.2)',
+              boxShadow:'0 0 60px -20px rgba(34,197,94,0.15)',
+              position:'relative', overflow:'hidden',
               flexWrap:'wrap', gap:24,
             }}
           >
             <div style={{ position:'relative' }}>
-              <h3 style={{ fontSize:'clamp(1.5rem,3vw,2.25rem)', fontWeight:600, letterSpacing:'-0.025em', fontFamily:'var(--font-display)' }}>
+              <h3 style={{ fontSize:'clamp(1.5rem,3vw,2.25rem)', fontWeight:600, letterSpacing:'-0.025em', fontFamily:'var(--font-display)', color:'#e2e8f4' }}>
                 Your next interview is{' '}
-                <span style={{ color:'#fff' }}>waiting</span>.
+                <span style={{ color: GREEN }}>waiting</span>.
               </h3>
-              <p style={{ color:'rgba(255,255,255,0.65)', marginTop:6, fontSize:15 }}>
+              <p style={{ color:'#8892a4', marginTop:6, fontSize:15 }}>
                 Set up a mock session in under 60 seconds. Start with one.
               </p>
             </div>
@@ -502,18 +525,16 @@ export function Home() {
             <div style={{ position:'relative', display:'flex', gap:12 }}>
               <button
                 onClick={() => navigate('/setup')}
-                style={{ display:'inline-flex', alignItems:'center', gap:10, padding:'14px 22px', background:'linear-gradient(180deg, #0544a9 0%,rgb(106, 116, 131) 100%)', color:'#fff', borderRadius:999, fontWeight:500, fontSize:15, letterSpacing:'-0.01em', cursor:'pointer', border:'none', transition:'transform .35s cubic-bezier(.2,.8,.2,1)', fontFamily:'inherit' }}
-                onMouseEnter={e => (e.currentTarget.style.transform = 'translateY(-1px)')}
-                onMouseLeave={e => (e.currentTarget.style.transform = '')}
+                className="btn-primary"
               >
-                <span style={{ width:6, height:6, borderRadius:99, background:'#fff' }} />
+                <span className="btn-dot" />
                 Start practicing
-                <span>→</span>
+                <span className="btn-arrow">→</span>
               </button>
               <button
                 onClick={() => navigate('/sample-feedback')}
                 className="btn-ghost-pill"
-                style={{ color:'#FAFAF7', borderColor:'rgba(255,255,255,0.20)' }}
+                style={{ color:'#e2e8f4', borderColor:'rgba(255,255,255,0.20)' }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)'; e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.20)'; e.currentTarget.style.background = 'transparent' }}
               >

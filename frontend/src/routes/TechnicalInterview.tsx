@@ -35,7 +35,7 @@ type DrawStroke =
   | { type: "ellipse"; x: number; y: number; w: number; h: number; color: string; width: number }
   | { type: "line"; x1: number; y1: number; x2: number; y2: number; color: string; width: number };
 
-const DRAW_COLORS = ["#0B0B0E", "#15A874", "#E8556B", "#60A5FA", "#FBBF24", "#C084FC", "#F5612B"];
+const DRAW_COLORS = ["#e2e8f4", "#22c55e", "#f87171", "#60A5FA", "#FBBF24", "#C084FC", "#4ade80"];
 const STROKE_SIZES = [1, 2, 4, 8];
 const ERASER_SIZES = [12, 24, 48, 96];
 
@@ -83,7 +83,7 @@ function redrawCanvas(canvas: HTMLCanvasElement, strokes: DrawStroke[], preview?
   if (!ctx) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  ctx.strokeStyle = "rgba(11,11,14,0.06)";
+  ctx.strokeStyle = "rgba(255,255,255,0.06)";
   ctx.lineWidth = 1;
   const grid = 40;
   for (let x = 0; x <= canvas.width; x += grid) {
@@ -358,7 +358,7 @@ function Whiteboard() {
       </div>
 
       {/* Canvas */}
-      <div ref={containerRef} className="relative flex-1 overflow-hidden bg-[#F4F3EE]">
+      <div ref={containerRef} className="relative flex-1 overflow-hidden bg-[#191d28]">
         <canvas
           ref={canvasRef}
           className="absolute inset-0"
@@ -778,22 +778,27 @@ export function TechnicalInterview() {
   const persona = session?.interviewer_tone ?? "neutral";
   const personaInitial = persona.charAt(0).toUpperCase();
   const personaColor: Record<string, string> = {
-    friendly: '#15A874', supportive: '#15A874',
+    friendly: '#22c55e', supportive: '#22c55e',
     neutral: '#5B5BD6', corporate: '#5B5BD6',
-    intense: '#F5612B', pressure: '#F5612B',
-    skeptical: '#E8556B', probing: '#E8556B',
+    intense: '#f87171', pressure: '#f87171',
+    skeptical: '#f87171', probing: '#f87171',
   };
   const avatarColor = personaColor[persona] ?? '#5B5BD6';
 
 
   return (
-    <div className="flex h-screen flex-col bg-ink-950 overflow-hidden">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+      className="flex h-screen flex-col bg-ink-950 overflow-hidden"
+    >
       {/* Top bar */}
       <div className="flex items-center gap-3 border-b border-ink-700/60 bg-ink-900 px-4 py-2.5">
         <div className="flex items-center gap-2 shrink-0">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-            <path d="M4 18 L12 4 L20 18 L15 18 L12 12 L9 18 Z" fill="#0B0B0E" />
-            <circle cx="19.5" cy="4.5" r="2.2" fill="#F5612B" />
+            <path d="M4 18 L12 4 L20 18 L15 18 L12 12 L9 18 Z" fill="#e2e8f4" />
+            <circle cx="19.5" cy="4.5" r="2.2" fill="#22c55e" />
           </svg>
           <span className="font-display text-sm font-bold text-paper" style={{ letterSpacing: '-0.02em' }}>Intervue</span>
           <span className="text-paper-faint/40 hidden sm:inline">/</span>
@@ -973,7 +978,7 @@ export function TechnicalInterview() {
                 theme="vs-dark"
                 options={{
                   fontSize: 13,
-                  fontFamily: '"JetBrains Mono", monospace',
+                  fontFamily: '"Geist Mono", "JetBrains Mono", monospace',
                   fontLigatures: true,
                   lineHeight: 1.7,
                   padding: { top: 16, bottom: 16 },
@@ -1216,6 +1221,6 @@ export function TechnicalInterview() {
           </button>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }
